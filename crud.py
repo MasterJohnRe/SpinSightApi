@@ -45,8 +45,11 @@ def watch_changes():
                     queue.put_nowait(data)
 
 
-def fetch_bonus_game_history(bonus_game_id: str, spins_amount: int) -> List[Result]:
-    query = {"result": bonus_game_id}
+def fetch_game_history(game_id: str = None, spins_amount: int = 70) -> List[Result]:
+    if game_id:
+        query = {"result": game_id}
+    else:
+        query = {}
     docs = mongodb_handler_results.query_document(query)[-spins_amount:]
     return [Result(**doc) for doc in docs]
 

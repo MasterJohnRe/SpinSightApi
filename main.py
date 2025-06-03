@@ -2,11 +2,11 @@ import threading
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Query
 from sse_starlette.sse import EventSourceResponse
-from typing import List, Literal
+from typing import List, Literal, Optional
 import uvicorn
 
 from crud import (
-    fetch_bonus_game_history,
+    fetch_game_history,
     fetch_top_multipliers,
     fetch_spin_statistics,
     fetch_topslot_rounds,
@@ -35,12 +35,12 @@ async def events():
     return EventSourceResponse(event_generator())
 
 
-@app.get("/bonus-game-history", response_model=List[Result])
-def get_bonus_game_history(
-        bonus_game_id: Literal["b1", "b2", "b3", "b4"],
+@app.get("/game-history", response_model=List[Result])
+def get_game_history(
+        game_id: Optional[Literal["1", "2", "5", "10", "b1", "b2", "b3", "b4"]] = Query(None),
         spins_amount: int = Query(DEFAULT_SPINS_AMOUNT, ge=1, le=10000)
 ):
-    return fetch_bonus_game_history(bonus_game_id, spins_amount)
+    return fetch_game_history(game_id, spins_amount)
 
 
 @app.get("/top-multipliers", response_model=List[Result])
