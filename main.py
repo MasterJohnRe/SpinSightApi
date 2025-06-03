@@ -45,8 +45,8 @@ def get_bonus_game_history(
 
 @app.get("/top-multipliers", response_model=List[Result])
 def get_top_multipliers(
-        spins_amount: int = Query(DEFAULT_SPINS_AMOUNT, ge=1, le=10000)):
-    return fetch_top_multipliers(spins_amount)
+        hours: int = Query(DEFAULT_SPINS_AMOUNT, ge=1, le=1000)):
+    return fetch_top_multipliers(hours)
 
 
 @app.get("/spin-statistics", response_model=List[SpinStatistics])

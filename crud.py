@@ -1,3 +1,4 @@
+import time
 from typing import List, Optional
 import asyncio
 from models import Result, SpinStatistics
@@ -50,14 +51,13 @@ def fetch_bonus_game_history(bonus_game_id: str, spins_amount: int) -> List[Resu
     return [Result(**doc) for doc in docs]
 
 
-def fetch_top_multipliers(spins_amount: int) -> List[dict]:
-    # Step 1: Get last `spins_amount` documents from max_multipliers
-    recent_docs = list(
-        mongodb_handler_max_multipliers.collection
-            .find({}, {"gameId": 1, "multiplier": 1})
-            .sort("_id", -1)
-            .limit(spins_amount)
-    )
+def fetch_top_multipliers(hours: int) -> List[dict]:
+    epoch_time_now = int(time.time() * 1000)
+    time_delta = hours * 60 * 60 * 1000
+    cutoff_epoch_ms = epoch_time_now - time_delta
+    query = {"gameTime": {"$gte": cutoff_epoch_ms}}
+
+    recent_docs = list(mongodb_handler_max_multipliers.collection.find(query))
 
     # Step 2: Sort by multiplier descending
     sorted_by_multiplier = sorted(
