@@ -1,4 +1,5 @@
 import threading
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Query
 from sse_starlette.sse import EventSourceResponse
 from typing import List, Literal
@@ -19,6 +20,14 @@ from models import (
 from constants import DEFAULT_SPINS_AMOUNT
 
 app = FastAPI(title="Crazy time tracker API", version="1.0.0")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://gamdom.com"],  # Or use ["*"] during testing
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 threading.Thread(target=watch_changes, daemon=True).start()
 
 
