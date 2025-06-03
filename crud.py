@@ -1,11 +1,47 @@
 from typing import List, Optional
+import asyncio
 from models import Result, SpinStatistics
 from mongo_db_handler import MongoDBHandler
+from bson.json_util import dumps
 
 mongodb_handler_results = MongoDBHandler()
 mongodb_handler_max_multipliers = MongoDBHandler(collection_name="max_multipliers")
 
 TOP_MULTIPLIERS_RESULTS_NUMBER = 5
+subscribers = []
+
+
+async def event_generator2():
+    queue = asyncio.Queue()
+    subscribers.append(queue)
+    try:
+        while True:
+            data = await queue.get()
+            yield {
+                "event": "winners_added",
+                "data": data,
+            }
+    finally:
+        subscribers.remove(queue)
+
+
+def watch_changes():
+    with mongodb_handler_results.collection.watch([{
+        "$match": {
+            "operationType": "update",
+            "updateDescription.updatedFields.winners": {"$exists": True}
+        }
+    }]) as stream:
+        for change in stream:
+            print("[Watcher] Detected update with 'winners':", change)  # <-- ADD THIS
+
+            updated_doc = mongodb_handler_results.collection.find_one({"_id": change["documentKey"]["_id"]})
+            if updated_doc:
+                data = dumps(updated_doc)
+                print("[Watcher] Sending to clients:", data)  # <-- AND THIS
+
+                for queue in subscribers:
+                    queue.put_nowait(data)
 
 
 def fetch_bonus_game_history(bonus_game_id: str, spins_amount: int) -> List[Result]:
