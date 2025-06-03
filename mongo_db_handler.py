@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 
 # === CONFIGURATION CONSTANTS ===
-#77.137.79.162
+# 77.137.79.162
 MONGO_URI = "mongodb://127.0.0.1:27017"
 DB_NAME = "crazytime"
 COLLECTION_NAME = "results"
@@ -12,7 +12,7 @@ CONNECTION_STRING = r'mongodb+srv://skipper:ibnfIMsumGqKTFqF@spinsightcluster.h4
 
 
 class MongoDBHandler:
-    def __init__(self, uri=MONGO_URI, db_name=DB_NAME, collection_name=COLLECTION_NAME):
+    def __init__(self, uri=CONNECTION_STRING, db_name=DB_NAME, collection_name=COLLECTION_NAME):
         try:
             self.client = MongoClient(uri)
             self.db = self.client[db_name]
