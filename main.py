@@ -33,8 +33,7 @@ threading.Thread(target=watch_changes, daemon=True).start()
 
 @app.get("/events")
 async def events():
-    async def event_generator():
-        return EventSourceResponse(event_generator2())
+    return EventSourceResponse(event_generator2())
 
 
 @app.get("/bonus-game-history", response_model=List[Result])
