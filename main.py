@@ -10,7 +10,7 @@ from crud import (
     fetch_top_multipliers,
     fetch_spin_statistics,
     fetch_topslot_rounds,
-    event_generator2,
+    event_generator,
     watch_changes
 )
 from models import (
@@ -27,13 +27,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 threading.Thread(target=watch_changes, daemon=True).start()
 
 
 @app.get("/events")
 async def events():
-    return EventSourceResponse(event_generator2())
+    return EventSourceResponse(event_generator())
 
 
 @app.get("/bonus-game-history", response_model=List[Result])
@@ -65,4 +64,4 @@ def get_last_topslot_rounds(
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=False)

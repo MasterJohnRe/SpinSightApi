@@ -11,7 +11,7 @@ TOP_MULTIPLIERS_RESULTS_NUMBER = 5
 subscribers = []
 
 
-async def event_generator2():
+async def event_generator():
     queue = asyncio.Queue()
     subscribers.append(queue)
     try:
@@ -33,12 +33,12 @@ def watch_changes():
         }
     }]) as stream:
         for change in stream:
-            print("[Watcher] Detected update with 'winners':", change)  # <-- ADD THIS
+            print(f"[Watcher] Detected update with 'winners':", change)
 
             updated_doc = mongodb_handler_results.collection.find_one({"_id": change["documentKey"]["_id"]})
             if updated_doc:
                 data = dumps(updated_doc)
-                print("[Watcher] Sending to clients:", data)  # <-- AND THIS
+                print("[Watcher] Sending to clients:", data)
 
                 for queue in subscribers:
                     queue.put_nowait(data)
