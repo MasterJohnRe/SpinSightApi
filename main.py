@@ -1,4 +1,6 @@
+import threading
 from fastapi import FastAPI, Query
+from sse_starlette.sse import EventSourceResponse
 from typing import List, Literal
 import uvicorn
 
@@ -6,7 +8,9 @@ from crud import (
     fetch_bonus_game_history,
     fetch_top_multipliers,
     fetch_spin_statistics,
-    fetch_topslot_rounds
+    fetch_topslot_rounds,
+    event_generator2,
+    watch_changes
 )
 from models import (
     Result,
@@ -15,6 +19,13 @@ from models import (
 from constants import DEFAULT_SPINS_AMOUNT
 
 app = FastAPI(title="Crazy time tracker API", version="1.0.0")
+threading.Thread(target=watch_changes, daemon=True).start()
+
+
+@app.get("/events")
+async def events():
+    async def event_generator():
+        return EventSourceResponse(event_generator2())
 
 
 @app.get("/bonus-game-history", response_model=List[Result])
