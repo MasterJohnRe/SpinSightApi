@@ -1,5 +1,5 @@
 import time
-from typing import List, Optional
+from typing import List, Dict
 import asyncio
 from models import Result, SpinStatistics
 from mongo_db_handler import MongoDBHandler
@@ -24,6 +24,11 @@ async def event_generator():
             }
     finally:
         subscribers.remove(queue)
+
+
+def remove_in_progress_round(results: List[Result]):
+    if 'winners' not in results[-1]:
+        del results[-1]
 
 
 def watch_changes():
@@ -51,6 +56,7 @@ def fetch_game_history(game_id: str = None, spins_amount: int = 70) -> List[Resu
     else:
         query = {}
     docs = mongodb_handler_results.query_document(query)[-spins_amount:]
+    remove_in_progress_round(docs)
     return [Result(**doc) for doc in docs]
 
 
@@ -158,7 +164,7 @@ def fetch_topslot_rounds(spins_amount: int) -> List[Result]:
             "$and": [
                 {"$in": [{"$type": "$topSlot.result"}, ["string", "int"]]},
                 {"$in": [{"$type": "$result"}, ["string", "int"]]},
-                {"$ne": ["$topSlot.multiplier", "missed"]},
+                {"$ne": ["$topSlot.multiplier", "Miss"]},
                 {"$eq": ["$topSlot.result", "$result"]}
 
             ]
