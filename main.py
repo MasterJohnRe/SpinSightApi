@@ -17,7 +17,7 @@ from models import (
     Result,
     SpinStatistics
 )
-from constants import DEFAULT_SPINS_AMOUNT
+from constants import DEFAULT_SPINS_AMOUNT, DEFAULT_PAGE
 
 app = FastAPI(title="Crazy time tracker API", version="1.0.0")
 app.add_middleware(
@@ -38,9 +38,10 @@ async def events():
 @app.get("/game-history", response_model=List[Result])
 def get_game_history(
         game_id: Optional[Literal["1", "2", "5", "10", "b1", "b2", "b3", "b4"]] = Query(None),
-        spins_amount: int = Query(DEFAULT_SPINS_AMOUNT, ge=1, le=10000)
+        spins_amount: int = Query(DEFAULT_SPINS_AMOUNT, ge=1, le=10000),
+        page: int = Query(DEFAULT_PAGE, ge=1, le=10000)
 ):
-    return fetch_game_history(game_id, spins_amount)
+    return fetch_game_history(game_id, spins_amount, page)
 
 
 @app.get("/top-multipliers", response_model=List[Result])

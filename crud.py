@@ -1,6 +1,9 @@
 import time
 from typing import List, Dict
 import asyncio
+
+from pymongo import DESCENDING
+
 from models import Result, SpinStatistics
 from mongo_db_handler import MongoDBHandler
 from bson.json_util import dumps
@@ -50,12 +53,17 @@ def watch_changes():
                     queue.put_nowait(data)
 
 
-def fetch_game_history(game_id: str = None, spins_amount: int = 70) -> List[Result]:
-    if game_id:
-        query = {"result": game_id}
-    else:
-        query = {}
-    docs = mongodb_handler_results.query_document(query)[-spins_amount:]
+def fetch_game_history(game_id: str = None, spins_amount: int = 70, page: int = 1) -> List[Result]:
+    query = {"result": game_id} if game_id else {}
+    to_skip = (page - 1) * spins_amount
+    cursor = (
+        mongodb_handler_results.collection
+            .find(query)
+            .sort("_id", DESCENDING)
+            .skip(to_skip)
+            .limit(spins_amount)
+    )
+    docs = list(cursor)
     remove_in_progress_round(docs)
     return [Result(**doc) for doc in docs]
 
