@@ -12,6 +12,7 @@ mongodb_handler_results = MongoDBHandler()
 mongodb_handler_max_multipliers = MongoDBHandler(collection_name="max_multipliers")
 
 TOP_MULTIPLIERS_RESULTS_NUMBER = 5
+CURRENT_ROUND_IN_PROGRESS_INDEX = 0
 subscribers = []
 
 
@@ -30,8 +31,8 @@ async def event_generator():
 
 
 def remove_in_progress_round(results: List[Result]):
-    if 'winners' not in results[-1]:
-        del results[-1]
+    if 'winners' not in results[CURRENT_ROUND_IN_PROGRESS_INDEX]:
+        del results[CURRENT_ROUND_IN_PROGRESS_INDEX]
 
 
 def watch_changes():
