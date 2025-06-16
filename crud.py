@@ -31,7 +31,7 @@ async def event_generator():
 
 
 def remove_in_progress_round(results: List[Result]):
-    if 'winners' not in results[CURRENT_ROUND_IN_PROGRESS_INDEX]:
+    if results[CURRENT_ROUND_IN_PROGRESS_INDEX]['totalMoneyWon'] == -1:
         del results[CURRENT_ROUND_IN_PROGRESS_INDEX]
 
 
