@@ -7,7 +7,7 @@ from pymongo import DESCENDING
 from models import Result, SpinStatistics, GameHistoryResponse
 from mongo_db_handler import MongoDBHandler
 from bson.json_util import dumps
-from constants import MAX_PAGE_ALLOWED
+from constants import MAX_PAGE_ALLOWED, DEFAULT_SPINS_AMOUNT
 
 mongodb_handler_results = MongoDBHandler()
 mongodb_handler_max_multipliers = MongoDBHandler(collection_name="max_multipliers")
@@ -55,7 +55,8 @@ def watch_changes():
                     queue.put_nowait(data)
 
 
-def fetch_game_history(game_id: str = None, spins_amount: int = 70, page: int = 1) -> GameHistoryResponse:
+def fetch_game_history(game_id: str = None, spins_amount: int = DEFAULT_SPINS_AMOUNT,
+                       page: int = 1) -> GameHistoryResponse:
     if page > MAX_PAGE_ALLOWED:
         return {"hasNextPage": False, "results": []}
     query = {"result": game_id} if game_id else {}
