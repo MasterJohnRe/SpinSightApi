@@ -47,3 +47,7 @@ class SpinStatistics(BaseModel):
     result: str
     frequency: float
     lastOccurrence: Optional[int]
+
+class GameHistoryResponse(BaseModel):
+    hasNextPage: bool
+    results: List[Result]

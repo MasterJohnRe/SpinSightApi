@@ -2,7 +2,7 @@ import threading
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Query
 from sse_starlette.sse import EventSourceResponse
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Dict
 import uvicorn
 
 from crud import (
@@ -15,7 +15,8 @@ from crud import (
 )
 from models import (
     Result,
-    SpinStatistics
+    SpinStatistics,
+    GameHistoryResponse
 )
 from constants import DEFAULT_SPINS_AMOUNT, DEFAULT_PAGE
 
@@ -35,7 +36,7 @@ async def events():
     return EventSourceResponse(event_generator())
 
 
-@app.get("/game-history", response_model=List[Result])
+@app.get("/game-history", response_model=GameHistoryResponse)
 def get_game_history(
         game_id: Optional[Literal["1", "2", "5", "10", "b1", "b2", "b3", "b4"]] = Query(None),
         spins_amount: int = Query(DEFAULT_SPINS_AMOUNT, ge=1, le=10000),
