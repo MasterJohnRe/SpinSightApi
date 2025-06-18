@@ -4,6 +4,7 @@ from fastapi import FastAPI, Query
 from sse_starlette.sse import EventSourceResponse
 from typing import List, Literal, Optional, Dict
 import uvicorn
+from starlette.responses import HTMLResponse
 
 from crud import (
     fetch_game_history,
@@ -29,6 +30,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 threading.Thread(target=watch_changes, daemon=True).start()
+
+
+@app.get("/privacy-policy", response_class=HTMLResponse)
+def serve_privacy_policy():
+    with open("privacy_policy.html", "r", encoding="utf-8") as file:
+        return file.read()
 
 
 @app.get("/events")
