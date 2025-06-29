@@ -1,3 +1,4 @@
+import time
 import threading
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Query
@@ -30,6 +31,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 threading.Thread(target=watch_changes, daemon=True).start()
+
+@app.get("/block")
+def block():
+    time.sleep(50000)
 
 
 @app.get("/privacy-policy", response_class=HTMLResponse)
