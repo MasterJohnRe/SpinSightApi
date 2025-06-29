@@ -32,11 +32,6 @@ app.add_middleware(
 )
 threading.Thread(target=watch_changes, daemon=True).start()
 
-@app.get("/block")
-def block():
-    time.sleep(50000)
-
-
 @app.get("/privacy-policy", response_class=HTMLResponse)
 def serve_privacy_policy():
     with open("privacy_policy.html", "r", encoding="utf-8") as file:
