@@ -12,7 +12,7 @@ from constants import MAX_PAGE_ALLOWED, DEFAULT_SPINS_AMOUNT
 mongodb_handler_results = MongoDBHandler()
 mongodb_handler_max_multipliers = MongoDBHandler(collection_name="max_multipliers")
 
-TOP_MULTIPLIERS_RESULTS_NUMBER = 5
+TOP_MULTIPLIERS_RESULTS_NUMBER = 10
 CURRENT_ROUND_IN_PROGRESS_INDEX = 0
 subscribers = []
 
